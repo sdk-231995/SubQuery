@@ -1,0 +1,17 @@
+
+I have 4 table in my database
+1. Employee
+2. Department
+3. Manager
+4. Projects
+
+Q1. Fetch the employee name & department name they belong to
+give me the sql query for Q1
+
+To fetch the employee name and the department name they belong to, assuming there's a relationship between the Employee and Department tables via a foreign key like department_id, here’s the SQL query:
+
+SELECT e.employee_name, d.department_name
+FROM Employee e
+JOIN Department d ON e.department_id = d.department_id;
+
+solution: In the Both table department_id is common column

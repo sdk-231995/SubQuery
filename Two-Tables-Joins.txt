@@ -1,0 +1,196 @@
+
+I have 4 table in my database
+1. Employee
+2. Department
+3. Manager
+4. Projects
+
+Q1. Fetch  the employee name & department name they belong to
+give me the sql query for Q1
+
+To fetch the employee name and the department name they belong to, assuming there's a relationship between the Employee and Department tables via a foreign key like department_id, here’s the SQL query:
+
+SELECT e.employee_name, d.department_name
+FROM Employee e
+JOIN Department d ON e.department_id = d.department_id;
+
+Employee table has a column department_id which is a foreign key referencing Department.
+solution: In the Both table department_id is common column
+
+
+
+Q2. Fetch All the employee name & their department name they belong to & generate SQL Query ,give me the sql query 
+
+For Q2, the requirement is to fetch all employee names along with the department names they belong to — including employees who may not be assigned to any department yet.
+
+In this case, you should use a LEFT JOIN to ensure even employees without a department are included.
+
+SELECT e.employee_name, d.department_name
+FROM Employee e
+LEFT JOIN Department d ON e.department_id = d.department_id;
+
+Explanation:
+LEFT JOIN ensures all employees are included.
+
+If an employee doesn't belong to any department, department_name will be NULL.
+
+Note : Employee table is left table in this join
+left join =inner join+ any addition record in the left table
+
+
+Q3. Fetch  the employee name & All department name they belong to & generate SQL Query ,give me the sql query 
+
+SELECT e.employee_name, d.department_name
+FROM Employee e
+Right JOIN Department d ON e.department_id = d.department_id;
+
+Note : Department table is Right table in this join
+Right join =inner join+ any addition record in the left table
+
+==================================================================
+
+ Assuming Schema:
+Employee(employee_id, employee_name)
+
+Department(department_id, department_name)
+
+Employee_Department(employee_id, department_id) → This join table holds the many-to-many mapping.
+
+SELECT e.employee_name, d.department_name
+FROM Employee e
+JOIN Employee_Department ed ON e.employee_id = ed.employee_id
+JOIN Department d ON ed.department_id = d.department_id;
+
+The SQL query  uses INNER JOIN (also known simply as JOIN) 
+
+First Join:
+	JOIN Employee_Department ed ON e.employee_id = ed.employee_id
+
+This joins the Employee table with the Employee_Department join table.
+
+It keeps only those employees who have an entry in the Employee_Department table (i.e., who are mapped to at least one department).
+
+Second Join:
+	JOIN Department d ON ed.department_id = d.department_id;
+	
+This connects the Employee_Department table with the Department table.
+
+Only departments that have a corresponding mapping in Employee_Department are included.
+
+Type of Join Used:
+Both joins are INNER JOINs, because JOIN without a keyword defaults to INNER JOIN.
+
+INNER JOIN returns only records that match in both tables.
+
+======================================
+FULL JOIN  = INNER JOIN
+
+SELECT 
+    e.employee_id,
+    e.employee_name,
+    d.department_id,
+    d.department_name
+FROM Employee e
+FULL OUTER JOIN Department d ON e.department_id = d.department_id;
+
+FULL  JOIN Department d ON e.department_id = d.department_id;
+
+query varies as per database changed
+
+===================================================
+
+Find the employees who's salary is more than the average salary earned by all employees
+
+SELECT employee_id, employee_name, salary
+FROM Employee
+WHERE salary > (
+    SELECT AVG(salary)
+    FROM Employee
+);
+
+The subquery:
+
+	SELECT AVG(salary) FROM Employee
+
+computes the average salary of all employees.
+
+The outer query selects only those employees whose salary is greater than that average.
+
+
+
+
+What FULL JOIN Returns:
+All employees with or without departments
+
+All departments with or without employees
+
+--------------------------------
+Parent Child
+
+EMP -parent
+Dept -child
+
+delete from emp where deptID=40;
+delete from Dept where deptID=40;
+
+1. Write a SQL query to display employee name of employees reporting to Employee 7839
+2. Write a SQL query to display maximum salary of employees working in CHICAGO.
+4. Display department name and  total amount spent by each department as salary for their employees.
+4. Write a SQL query to display employee name who were hired before their managers.
+5. Write a SQL Query to display employee names and book names for the books which are not returned.
+6. Write a SQL Query to display employee name along with the total numbers of books issued by each employee in the year 2022
+7. Write a SQL Query to display employee name and location of employees who have issued the book Chanakya Neeti.
+8. Write a SQL Query to display all Employee names along with their department name in descending order of the book issue date
+9. Write a SQL Query to display all book names which were issued by at least 1 employee.
+10.Write a SQL Query to display last 3 letter of employee name, location, book name issued by employee , the author name for employees whose salary is less than 10000 and hired in the year 1981.
+
+order execution of sql query
+from
+where
+group by
+having
+select 
+order by
+
+
+SUBQUERY ASSIGNMENT
+=========================================
+1. Select all employee and salary who are earning more than employee 7839
+						salary grater than 7839
+select * from emp where sal>(select sal from emp where empno=7839);
+
+2. Select employee name, salary, employee 7839 's salary for employess earning more than employee 7839
+select ename,sal,(select sal from emp where empno=7839) from emp where  sal> (select sal from emp where empno=7839)
+
+3.Select all detail of employee who belong to same department as employee 7839
+select * from emp where deptno=(select deptno from emp where empno=7839);
+
+4. Select all employee names, their salary and total average salary of all emplloyees who are earning more than the average salary
+select ename,sal,select avg(sal) from emp) from emp where sal > (select avg(sal) from emp);
+
+5. Select all employee detail who are hired before BLAKE
+select * from emp where hiredate> (select hiredate from emp where ename='blake'
+)
+6. Select all employee name and salary who are earning more than BLAKE but less than KING
+
+7. select all department numbers which has more number of employees than department 10
+select deptno ,count(*) from emp group by deptno  having count(*)> (select count(*) from emp where deptno=10)
+
+8. select department names which has more number of employees working than department 10 
+
+select deptno ,count(*) from emp e join dept d on e.deptno=d.deptno
+group by  dname
+having count(*)> (select count(*) from emp where deptno=10)
+
+9. Select all department names which has more number of employees working than 'ACCOUNTING' department
+
+select dname ,count(*) from emp e join dept d on e.deptno=d.deptno
+group by  dname
+having count(*)> (select count(*) from emp e join dept d on e.deptno=d.deptno where  dname='ACCOUNTING')
+
+10. Write a SQL query to display 3rd highest salary using subquery [Without using Ranking functions]
+
+select max(sal) from emp   --1st
+select max(sal) from emp where sal>(select max(sal) from emp)   --2nd
+
+select max(sal) from emp where sal>(select max(sal) from emp where sal>(select max(sal) from emp));   --3rd
